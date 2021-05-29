@@ -43,9 +43,15 @@ export default class registrarUser extends Component {
             password2: this.state.password2,
             numberPhone: this.state.numberPhone
         };
-        
+        const headers = {headers: {
+            "Access-Control-Allow-Origin": "*"
+          }}
         if (this.state.password === this.state.password2) {
-            const res = await axios.post('https://serverpacmanoage.herokuapp.com/registro', datosRegistro);
+            const res = await (await axios.post('https://serverpacmanoage.herokuapp.com/registro', datosRegistro),
+            
+            {
+                headers: headers
+              });
             const resultado = res.data.resultadoRegisto;
 
             if (resultado === 'true') {
