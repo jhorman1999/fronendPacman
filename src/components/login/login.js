@@ -45,7 +45,14 @@ export default class login extends Component {
             password: this.state.password,
         };
 
-        const res = await axios.post('https://serverpacmanoage.herokuapp.com/', datosLogin);
+        const headers = {headers: {
+            "Access-Control-Allow-Origin": "*"
+          }}
+        const res = await axios.post('https://serverpacmanoage.herokuapp.com/', datosLogin,
+        {
+            headers: headers
+          }
+        );
         const resultado = res.data.resultadoLogin;
 
         if (resultado === 'true') {
