@@ -44,10 +44,7 @@ export default class registrarUser extends Component {
             telefono: this.state.numberPhone,
             usuario_conectado: "false"
         };
-        const headers = {headers: {
-            "Access-Control-Allow-Origin": "*"
-          }}
-          
+        
         if (this.state.password === this.state.password2) {
             const res = await axios.post('https://serverpacmanpage.herokuapp.com/server/users/', datosRegistro);
             const resultado = res;
@@ -62,8 +59,8 @@ export default class registrarUser extends Component {
                 window.location.href = '/';
             } else {
                 await swal({
-                    title: "El correo ya esta registrado",
-                    text: "Por favor, escribe otro correo",
+                    title: "Algo salió mal",
+                    text: "Porfavor revisa que todo esté bien",
                     icon: "warning",
                     timer: "3000"
                 });

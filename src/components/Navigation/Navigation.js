@@ -15,9 +15,9 @@ export default class Navigation extends Component {
 
                     <Link className="navbar-brand" to="/">
                         <i className="material-icons">
-                            pacman                         
+                            pacman
                              </i> multiplayer
-                             
+
                     </Link>
 
                     <div className="collapse navbar-collapse" id="navbarNav">
@@ -36,15 +36,15 @@ export default class Navigation extends Component {
             if (localStorage.getItem('tipoDeUser') === 'admin') {
                 return (
                     <div className="container">
-    
+
                         <Link className="navbar-brand" to="/paginaPrincipalAdmin">
                             <i className="material-icons">
                                 pacman </i> multiplayer
                         </Link>
-    
+
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav  ml-auto">
-                            <li className="nav-item active">
+                                <li className="nav-item active">
                                     <Link className="nav-link" to="/paginaPrincipalAdmin" > Admin</Link>
                                 </li>
                                 <li className="nav-item active">
@@ -60,19 +60,19 @@ export default class Navigation extends Component {
                         </div>
                     </div>
                 )
-            } else if (localStorage.getItem('tipoDeUser') === 'jugador'){
-                
+            } else if (localStorage.getItem('tipoDeUser') === 'user') {
+
                 return (
                     <div className="container">
-    
+
                         <Link className="navbar-brand" to="/paginaPrincipalJugador">
                             <i className="material-icons">
                                 pacman </i> multiplayer
                         </Link>
-    
+
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav  ml-auto">
-    
+
                                 <li className="nav-item active">
                                     <Link className="nav-link" to="/paginaPrincipalJugador" > Jugar</Link>
                                 </li>
@@ -87,7 +87,7 @@ export default class Navigation extends Component {
                     </div>
                 )
             }
-            
+
         }
     }
 
