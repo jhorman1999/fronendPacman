@@ -37,26 +37,24 @@ export default class registrarUser extends Component {
     onSubmit = async (e) => {
         e.preventDefault();
         const datosRegistro = {
-            correo: this.state.correo,
-            userName: this.state.userName,
-            password: this.state.password,
-            password2: this.state.password2,
-            numberPhone: this.state.numberPhone
+            _id: this.state.correo,
+            nombre: this.state.userName,
+            pass: this.state.password,
+            user_type: "user",
+            telefono: this.state.numberPhone,
+            usuario_conectado: "false"
         };
         const headers = {headers: {
             "Access-Control-Allow-Origin": "*"
           }}
+          
         if (this.state.password === this.state.password2) {
-            const res = await (await axios.post('https://serverpacmanoage.herokuapp.com/registro', datosRegistro),
-            
-            {
-                headers: headers
-              });
-            const resultado = res.data.resultadoRegisto;
-
-            if (resultado === 'true') {
+            const res = await axios.post('https://serverpacmanpage.herokuapp.com/server/users/', datosRegistro);
+            const resultado = res;
+            console.log(resultado.statusText);
+            if (resultado.statusText == 'OK') {
                 await swal({
-                    title: "Registro Exitoso",
+                    title: "Registro Exitoso, disfruta del juego",
                     text: "",
                     icon: "success",
                     timer: "3000"
