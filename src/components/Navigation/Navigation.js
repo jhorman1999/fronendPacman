@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import swal from 'sweetalert';
-import axios from 'axios'
+//import axios from 'axios'
 
 
 export default class Navigation extends Component {
@@ -100,19 +100,35 @@ export default class Navigation extends Component {
             dangerMode: true,
         }).then(async (cerrar) => {
             if (cerrar) {
-
-                // cambiar estado a desconectado
-                var correo = localStorage.getItem('correo');
                 const estadoUser = {
-                    correo: correo,
-                    estado: "desconectado",
+                    _id: localStorage.getItem('correo'),
+                    nombre: localStorage.getItem('nombre'),
+                    pass: localStorage.getItem('pass'),
+                    user_type: localStorage.getItem('tipoDeUser'),
+                    telefono: localStorage.getItem('ubicacion'),
+                    usuario_conectado: "false",
                 };
-                const res = await axios.patch('https://serverpacmanoage.herokuapp.com/', estadoUser);
-
+                this.actualizarEstadoJugador(estadoUser);
                 localStorage.clear();
-                window.location.href = '/';
             }
         });
+    }
+
+    actualizarEstadoJugador(data){
+        var direccion = 'https://serverpacmanpage.herokuapp.com/server/users';
+        fetch(direccion + '/' + localStorage.getItem("correo"), {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => {
+                console.log(res)
+                window.alert("cierre de sesión efectuado");
+            })
+            .catch(err => window.alert("Lo sentimos, algo falló. Comprueba y vuelve a intentar"));
     }
 
     render() {

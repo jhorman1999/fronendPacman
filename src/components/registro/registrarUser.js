@@ -49,7 +49,7 @@ export default class registrarUser extends Component {
             const res = await axios.post('https://serverpacmanpage.herokuapp.com/server/users/', datosRegistro);
             const resultado = res;
             console.log(resultado.statusText);
-            if (resultado.statusText == 'OK') {
+            if (resultado.statusText === 'OK') {
                 await swal({
                     title: "Registro Exitoso, disfruta del juego",
                     text: "",

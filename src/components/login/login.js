@@ -16,6 +16,9 @@ export default class login extends Component {
         this.state = {
             logueado: false
         }
+        if(localStorage.getItem("correo") != undefined){
+            this.state.logueado = true;
+        }
     }
 
     onInputChange = e => {
@@ -35,6 +38,8 @@ export default class login extends Component {
         for (let i = 0; i < res.data.length; i++) {
             if (res.data[i]._id == correo && res.data[i].pass == contra) {
                 localStorage.setItem('correo', correo);
+                localStorage.setItem('nombre', res.data[i].nombre);
+                localStorage.setItem('pass', res.data[i].pass);
                 localStorage.setItem('tipoDeUser', res.data[i].user_type);
                 localStorage.setItem('ubicacion', "calle 21 Miami");
                 res.data[i].usuario_conectado = "true";
