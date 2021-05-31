@@ -44,7 +44,6 @@ export default class registrarUser extends Component {
             telefono: this.state.numberPhone,
             usuario_conectado: "false"
         };
-        
         if (this.state.password === this.state.password2) {
             const res = await axios.post('https://serverpacmanpage.herokuapp.com/server/users/', datosRegistro);
             const resultado = res;
@@ -64,7 +63,6 @@ export default class registrarUser extends Component {
                     icon: "warning",
                     timer: "3000"
                 });
-
             }
 
         } else {

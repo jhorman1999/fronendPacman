@@ -1,25 +1,50 @@
 import React, { Component } from 'react'
-
+import axios from 'axios';
 export default class paginaPrincipal extends Component {
 
     constructor(props) {
         super(props);
         this.render = this.render.bind(this);
-
-        setInterval(() => {
-            this.simulacionDatos();
+        this.state = {
+            puntuacion: 0
+        }
+        
+        var datos = setInterval(() => {
+            var cancelar = this.simulacionDatos();
+            if(cancelar == true){
+                clearInterval(datos);
+            }
         }, 2000);
     }
 
 
     simulacionDatos(){
-        var puntosJugador = 0;
+        
         const urlActual = window.location.toString().split("/");
         if(urlActual[urlActual.length-1] == "paginaPrincipalJugador"){
-            puntosJugador += 10;
+            this.state.puntuacion = 10 + this.state.puntuacion;
+            console.log("Puntos: " + this.state.puntuacion);
+            return false;
         }else{
-            //subir la data a la db
+            this.subirInfoDB();
+            this.state.puntuacion = 0;
+            return true;
         }
+    }
+
+    async subirInfoDB(){
+        const datosRegistro = {
+            _id: localStorage.getItem("correo"),
+            puntuacion: this.state.puntuacion,
+            ubicacion: ""
+        };
+        //const res = await axios.post('https://serverpacmanpage.herokuapp.com/server/Puntaje/', datosRegistro);
+        console.log("Hola, ya llegué");
+        const res = await axios.get('https://serverpacmanpage.herokuapp.com/server/Puntaje');
+        console.log("Me llegan estos datos: " + res);
+        console.log("hago un put ahora jeje");
+        const envio = await axios.post('https://serverpacmanpage.herokuapp.com/server/Puntaje/', datosRegistro);
+        console.log(envio);
     }
 
 
