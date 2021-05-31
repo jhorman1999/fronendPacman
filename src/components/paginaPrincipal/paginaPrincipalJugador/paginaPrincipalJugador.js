@@ -4,10 +4,24 @@ export default class paginaPrincipal extends Component {
 
     constructor(props) {
         super(props);
-
-
         this.render = this.render.bind(this);
+
+        setInterval(() => {
+            this.simulacionDatos();
+        }, 2000);
     }
+
+
+    simulacionDatos(){
+        var puntosJugador = 0;
+        const urlActual = window.location.toString().split("/");
+        if(urlActual[urlActual.length-1] == "paginaPrincipalJugador"){
+            puntosJugador += 10;
+        }else{
+            //subir la data a la db
+        }
+    }
+
 
     componentDidMount() {
         const correo = localStorage.getItem('correo');

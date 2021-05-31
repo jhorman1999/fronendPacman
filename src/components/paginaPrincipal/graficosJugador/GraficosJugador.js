@@ -21,36 +21,13 @@ export default class paginaParaGraficos extends Component {
             jugadoresConectados: 0,
             tablaPuntajes: []
         }
-        this.consultarDatos();
+        
         setInterval(() => {
             this.consultarDatos();
         }, 10000);
     }
     async consultarDatos() {
-
-        var correo = localStorage.getItem('correo');
-
-        const datosConsultarGraficas = {
-            "correo": correo
-        };
-
-        const res = await axios.get('https://serverpacmanoage.herokuapp.com/estadisticasJugador', { params: datosConsultarGraficas }).catch(function (error) {
-            console.log("ERROR: " + error);
-        });;
-
-        this.setState({
-            totalPartidas: res.data.totalPartidas,
-            puntajeTotal: res.data.puntajeTotal,
-            partidasGanadas: res.data.partidasGanadas,
-            minutosJugados: res.data.minutosJugados,
-            segundosJugados: res.data.segundosJugados,
-            jugadoresConectados: res.data.jugadoresConectados,
-            tablaPuntajes: res.data.tablaPuntajes,
-        }
-        )
-
-
-
+        //aquí van las actualizaciones
     }
     graficaPartidas() {
         if (this.state.partidasGanadas === 0) {
