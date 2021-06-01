@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import ReactDOM from 'react-dom';
 import { Chart } from "react-google-charts";
 import axios from 'axios'
 import './GraficosJugador.css'
@@ -19,7 +19,12 @@ export default class paginaParaGraficos extends Component {
             minutosJugados: 0,
             segundosJugados: 0,
             jugadoresConectados: 0,
-            tablaPuntajes: []
+            tablaPuntajes:[],
+
+            puntuacionJugadores: [],
+
+            graficaPuntuacionJugadores: [],
+            graficaCorreoJugadores:[]
         }
         
         setInterval(() => {
@@ -28,7 +33,53 @@ export default class paginaParaGraficos extends Component {
     }
     async consultarDatos() {
         //aquí van las actualizaciones
+        const res = await axios.get('https://serverpacmanpage.herokuapp.com/server/Puntaje');    
+        this.top10JugadoresInfo(res.data);
     }
+
+
+    top10JugadoresInfo(data){
+        this.state.puntuacionJugadores = [];
+        this.state.correoMejorPuntuacionJugadores = [];
+
+        for(let i = 0; i < data.length; i++){
+            const posiciones = {
+                correo: data[i]._id,
+                puntuacion: parseInt(data[i].puntuacion)
+            }
+            this.state.puntuacionJugadores.push(posiciones);
+        }
+        console.log("Ahora tengo: ");
+        
+        this.state.puntuacionJugadores.sort((a,b) => b.puntuacion - a.puntuacion);
+
+        //Mostrar los datos en pantalla
+        var elementosHTML = [];
+        for(let i = 0; i < this.state.puntuacionJugadores.length; i++){
+            
+            if(i < 10){
+                const my_tr = <tr id="tr_top"></tr>;
+                console.log("obtn div");
+                console.log(document.getElementById("tablaMejoresJugadores"));
+                elementosHTML.push(my_tr);
+                //ReactDOM.render(my_tr, document.getElementById("tablaMejoresJugadores"));
+                const my_th01 = <th id="th_top01">{i + 1}</th>
+                const my_th02 = <th id="th_top02">{this.state.puntuacionJugadores[i].correo}</th>
+                const my_th03 = <th id="th_top03">{this.state.puntuacionJugadores[i].puntuacion}</th>
+                elementosHTML.push(my_th01);
+                elementosHTML.push(my_th02);
+                elementosHTML.push(my_th03);
+                //ReactDOM.render(my_th01, document.getElementById("tr_top"));
+                //ReactDOM.render(my_th02, document.getElementById("tr_top"));
+                //ReactDOM.render(my_th03, document.getElementById("tr_top"));
+            }
+        }
+        ReactDOM.render(elementosHTML, document.getElementById("tablaMejoresJugadores"));
+
+
+    }
+
+
     graficaPartidas() {
         if (this.state.partidasGanadas === 0) {
 
@@ -102,29 +153,6 @@ export default class paginaParaGraficos extends Component {
             </h5>)
     }
 
-    tablaPuntajesMasAltos() {
-
-
-
-        if (this.state.tablaPuntajes.length > 0) {
-            return this.state.tablaPuntajes.map((item, key) =>
-
-                <tr key={key}>
-                    <th key={key + "key"}>{key + 1} </th>
-                    <th key={key + "correo"}>{item.correo} </th>
-                    <th key={key + "puntaje"}> {item.puntajeTotal}</th>
-                </tr>
-            )
-        }
-
-        return null
-
-
-    }
-
-
-
-
     render() {
 
         const graficos = this.graficaPartidas();
@@ -132,7 +160,6 @@ export default class paginaParaGraficos extends Component {
         const jugadoresConectadosAux = this.jugadoresConectados();
         const puntajeTotalJugadorAux = this.puntajeTotalJugador();
         const tiempoJugadoAux = this.tiempoJugado();
-        const tablaPuntajesMasAltosAux = this.tablaPuntajesMasAltos();
         return (
             <div className="div">
                 <div className="card">
@@ -183,17 +210,19 @@ export default class paginaParaGraficos extends Component {
                         <table className='tablaPuntajes'>
 
                             <thead>
+                                <div id = "tablaMejoresJugadores">
                                 <tr>
                                     <th>posicion</th>
                                     <th>Correo</th>
                                     <th>Puntaje</th>
                                 </tr>
+                                </div>
+                                
                             </thead>
 
 
                             <tbody>
-
-                                {tablaPuntajesMasAltosAux}
+                                
                             </tbody>
                         </table>
                     </div>
