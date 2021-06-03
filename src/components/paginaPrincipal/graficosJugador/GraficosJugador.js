@@ -19,48 +19,94 @@ export default class paginaParaGraficos extends Component {
             minutosJugados: 0,
             segundosJugados: 0,
             jugadoresConectados: 0,
-            tablaPuntajes:[],
+            tablaPuntajes: [],
 
             puntuacionJugadores: [],
 
             graficaPuntuacionJugadores: [],
-            graficaCorreoJugadores:[]
+            graficaCorreoJugadores: []
         }
-        
+
         setInterval(() => {
             this.consultarDatos();
         }, 10000);
     }
     async consultarDatos() {
         //aquí van las actualizaciones
-        const res = await axios.get('https://serverpacmanpage.herokuapp.com/server/Puntaje');    
+        const res = await axios.get('https://serverpacmanpage.herokuapp.com/server/Puntaje');
         this.top10JugadoresInfo(res.data);
+        this.jugadoresConectadosTiempoReal();
+        this.infoTarjetaJugador(res.data);
+    }
+
+    async jugadoresConectadosTiempoReal() {
+        const res = await axios.get('https://serverpacmanpage.herokuapp.com/server/users');
+        this.state.jugadoresConectados = 0;
+        //console.log(document.getElementById("playersConnected"));  
+        for (let i = 0; i < res.data.length; i++) {
+            if (res.data[i].usuario_conectado == "true") {
+                this.state.jugadoresConectados = this.state.jugadoresConectados + 1;
+            }
+        }
+        const num_jugadopres_conectados = <h5 className='jugadoresConectadosDatos'>Jugadores conectados:&nbsp; {this.state.jugadoresConectados}</h5>;
+        ReactDOM.render(num_jugadopres_conectados, document.getElementById("playersConnected"));
+    }
+
+    infoTarjetaJugador(data){
+        var puntaje = "";
+        var elementosHTML = [];
+        for(let i = 0; i < data.length; i++){
+            if(data[i]._id == localStorage.getItem("correo")){
+                puntaje = data[i].puntuacion;
+            }
+        }
+
+        const mejorPuntaje = <h5> Tu mejor puntaje es: {puntaje} </h5>;
+        var segundos = (parseInt(puntaje)/10)/2;
+        const minutos = segundos/60;
+        elementosHTML.push(mejorPuntaje);
+        if(minutos >= 1){
+            segundos = segundos - (60*minutos);
+            const minutosMejorPuntaje = <h5>tu mejor tiempo es: {minutos} minutos con {segundos} segundos</h5>
+            elementosHTML.push(minutosMejorPuntaje);
+        }else{
+            const minutosMejorPuntaje = <h5>tu mejor tiempo son: {segundos} segundos</h5>
+            elementosHTML.push(minutosMejorPuntaje);
+        }
+        ReactDOM.render(elementosHTML, document.getElementById("tarjetaInfo"));
     }
 
 
-    top10JugadoresInfo(data){
+    top10JugadoresInfo(data) {
         this.state.puntuacionJugadores = [];
         this.state.correoMejorPuntuacionJugadores = [];
 
-        for(let i = 0; i < data.length; i++){
+        for (let i = 0; i < data.length; i++) {
             const posiciones = {
                 correo: data[i]._id,
                 puntuacion: parseInt(data[i].puntuacion)
             }
             this.state.puntuacionJugadores.push(posiciones);
         }
-        console.log("Ahora tengo: ");
-        
-        this.state.puntuacionJugadores.sort((a,b) => b.puntuacion - a.puntuacion);
+
+        this.state.puntuacionJugadores.sort((a, b) => b.puntuacion - a.puntuacion);
 
         //Mostrar los datos en pantalla
         var elementosHTML = [];
-        for(let i = 0; i < this.state.puntuacionJugadores.length; i++){
-            
-            if(i < 10){
+
+        const tr_inicial = <tr></tr>;
+        const th_posicion = <th>Posición</th>;
+        const th_correo = <th>Correo</th>;
+        const th_puntaje = <th>Puntaje</th>;
+        elementosHTML.push(tr_inicial);
+        elementosHTML.push(th_posicion);
+        elementosHTML.push(th_correo);
+        elementosHTML.push(th_puntaje);
+
+        for (let i = 0; i < this.state.puntuacionJugadores.length; i++) {
+
+            if (i < 10) {
                 const my_tr = <tr id="tr_top"></tr>;
-                console.log("obtn div");
-                console.log(document.getElementById("tablaMejoresJugadores"));
                 elementosHTML.push(my_tr);
                 //ReactDOM.render(my_tr, document.getElementById("tablaMejoresJugadores"));
                 const my_th01 = <th id="th_top01">{i + 1}</th>
@@ -75,70 +121,31 @@ export default class paginaParaGraficos extends Component {
             }
         }
         ReactDOM.render(elementosHTML, document.getElementById("tablaMejoresJugadores"));
-
-
-    }
-
-
-    graficaPartidas() {
-        if (this.state.partidasGanadas === 0) {
-
-            return (
-                <div>
-                    todavia no has jugado ninguna partida :(
-                </div>)
-        } else {
-            return (
-                <div>
-                    <Chart
-                        width={'1000'}
-                        height={'600'}
-                        chartType="PieChart"
-                        loader={<div>Loading Chart</div>}
-
-                        data={
-                            [
-                                ['partidas', 'numero de patidas'],
-                                ['partidas ganadas', this.state.partidasGanadas],
-                                ['partidas perdidas', (this.state.totalPartidas - this.state.partidasGanadas)],
-
-                            ]}
-                        options={{
-                            title: 'porcentaje de partidas ganadas',
-                        }}
-                        rootProps={{ 'data-testid': '1' }}
-                    />
-                </div>
-            )
-        }
     }
 
     totalPartidasJugador() {
 
         return (
 
-            
+
             <h5>
-                Tu total de partidas jugadas es:&nbsp; 
+                Tu total de partidas jugadas es:&nbsp;
                 {this.state.totalPartidas}
             </h5>)
     }
+
+
     jugadoresConectados() {
         return (
 
-            <div>
-                <h5 className='jugadoresConectados'>
-                    Jugadores conectados:&nbsp; 
-                
-                </h5>
-                <h5 className='jugadoresConectadosDatos'>{this.state.jugadoresConectados}</h5>
+            <div id="playersConnected">
             </div>
-            )
+        )
     }
     puntajeTotalJugador() {
         return (
             <h5>
-                Tu puntaje total es: &nbsp; 
+                Tu mejor puntaje es: &nbsp;
                 {this.state.puntajeTotal}
             </h5>)
 
@@ -155,7 +162,6 @@ export default class paginaParaGraficos extends Component {
 
     render() {
 
-        const graficos = this.graficaPartidas();
         const totalPartidasAux = this.totalPartidasJugador();
         const jugadoresConectadosAux = this.jugadoresConectados();
         const puntajeTotalJugadorAux = this.puntajeTotalJugador();
@@ -169,60 +175,42 @@ export default class paginaParaGraficos extends Component {
                     <div className="row mx-auto">
 
                         <div className="col-sm-6">
-                        <br/>
+                            <br />
                             <div className="card">
                                 <div align='center' className="card-body">
                                     <h2>
-                                        Partidas ganadas vs Partidas Perdidas
-                    </h2>
-                                    {graficos}
+                                        Bienvenid@ {localStorage.getItem("nombre")}
+                                    </h2>
                                 </div>
                             </div>
                         </div>
 
                         <div className="col-sm-6">
-                            <br/>
-                        <div className="card">
-                        <br/>
-                        {jugadoresConectadosAux}
-                        </div>
+                            <br />
                             <div className="card">
-                                <div className="card-body">
+                                <br />
+                                {jugadoresConectadosAux}
+                            </div>
+                            <div className="card">
+                                <div className="card-body" id="tarjetaInfo">
                                     {puntajeTotalJugadorAux}
                                     {tiempoJugadoAux}
-                                    
                                     {totalPartidasAux}
                                 </div>
                             </div>
                         </div>
-
-
-
                     </div>
-
-
                     <br></br>
                     <div align='center' className='top10Jugadores'>
-
                         <h2>
                             Top 10 jugadores
-                    </h2>
+                        </h2>
                         <table className='tablaPuntajes'>
-
                             <thead>
-                                <div id = "tablaMejoresJugadores">
-                                <tr>
-                                    <th>posicion</th>
-                                    <th>Correo</th>
-                                    <th>Puntaje</th>
-                                </tr>
+                                <div id="tablaMejoresJugadores">
                                 </div>
-                                
                             </thead>
-
-
                             <tbody>
-                                
                             </tbody>
                         </table>
                     </div>
